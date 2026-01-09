@@ -9,6 +9,7 @@ announcements to Slack with author tagging.
 import argparse
 import json
 import os
+import random
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -218,14 +219,39 @@ def save_posted_papers(pmids: set[str]) -> None:
         json.dump(data, f, indent=2)
 
 
+CELEBRATORY_EMOJIS = [
+    "\U0001F389",  # party popper
+    "\U0001F38A",  # confetti ball
+    "\U0001F3C6",  # trophy
+    "\U0001F31F",  # glowing star
+    "\U0001F4E2",  # loudspeaker
+    "\U0001F680",  # rocket
+    "\U0001F4AF",  # 100
+    "\U0001F525",  # fire
+    "\U00002728",  # sparkles
+    "\U0001F947",  # first place medal
+]
+
+
 def format_slack_message(paper: dict, group_authors: list[dict]) -> str:
     """Format a paper as a Slack message."""
+    emoji = random.choice(CELEBRATORY_EMOJIS)
     title = paper["title"]
     authors_str = ", ".join(paper["authors"][:10])
     if len(paper["authors"]) > 10:
         authors_str += f", et al. ({len(paper['authors'])} authors)"
 
-    mentions = " ".join(f"<@{a['slack_user_id']}>" for a in group_authors)
+    # Format CLIF authors - use @mention if valid Slack ID, otherwise just name
+    clif_authors_parts = []
+    for a in group_authors:
+        slack_id = a.get("slack_user_id", "")
+        # Valid Slack user IDs start with 'U' or 'W' and are alphanumeric
+        if slack_id and slack_id[0] in ("U", "W") and slack_id.isalnum():
+            clif_authors_parts.append(f"<@{slack_id}>")
+        else:
+            clif_authors_parts.append(a.get("pubmed_name", "Unknown"))
+    clif_authors_str = " ".join(clif_authors_parts)
+
     pubmed_url = f"https://pubmed.ncbi.nlm.nih.gov/{paper['pmid']}/"
 
     journal_info = ""
@@ -235,10 +261,10 @@ def format_slack_message(paper: dict, group_authors: list[dict]) -> str:
             journal_info += f" ({paper['pub_date']})"
 
     return (
-        f"*New Publication*\n\n"
+        f"{emoji} *New Publication*\n\n"
         f"*Title:* {title}\n\n"
         f"*Authors:* {authors_str}{journal_info}\n\n"
-        f"*Group members:* {mentions}\n\n"
+        f"*CLIF authors:* {clif_authors_str}\n\n"
         f"{pubmed_url}"
     )
 
