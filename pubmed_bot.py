@@ -77,11 +77,11 @@ def get_authors_from_sheet(sheet_id: str) -> list[dict]:
 
     for row in records:
         pubmed_name = row.get("pubmed_name", "").strip()
-        slack_user_id = row.get("slack_user_id", "").strip()
+        slack_user_id = row.get("slack_user_id", "").strip() or None
         name_variants = row.get("name_variants", "")
         affiliation = row.get("affiliation", "").strip() or None
 
-        if not pubmed_name or not slack_user_id:
+        if not pubmed_name:
             continue
 
         all_names = [pubmed_name]
