@@ -1,0 +1,23 @@
+# Environment
+.env
+*.json
+!posted_papers.json
+
+# Google credentials
+*credentials*.json
+service-account*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

@@ -1,0 +1,41 @@
+name: Daily PubMed Check
+
+on:
+  schedule:
+    # Run daily at 8 AM UTC (adjust as needed)
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    # Allow manual triggering from GitHub UI
+
+jobs:
+  check-pubmed:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run PubMed bot
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
+        run: python pubmed_bot.py
+
+      - name: Commit updated posted_papers.json
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add posted_papers.json
+          git diff --staged --quiet || git commit -m "Update posted papers list"
+          git push
