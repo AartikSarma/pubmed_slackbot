@@ -6,6 +6,12 @@ on:
     - cron: '0 8 * * *'
   workflow_dispatch:
     # Allow manual triggering from GitHub UI
+    inputs:
+      days:
+        description: 'Number of days to look back for papers'
+        required: false
+        default: '7'
+        type: string
 
 permissions:
   contents: write
@@ -33,7 +39,7 @@ jobs:
           GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
-        run: python pubmed_bot.py
+        run: python pubmed_bot.py --days ${{ inputs.days || '7' }}
 
       - name: Commit updated posted_papers.json
         run: |
