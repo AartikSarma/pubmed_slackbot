@@ -132,7 +132,65 @@ To base64-encode your credentials:
 base64 -i your-service-account.json | tr -d '\n'
 ```
 
-You can also manually trigger the workflow from the Actions tab.
+You can also manually trigger the workflow from the Actions tab or the `gh` CLI (see below).
+
+### Testing the Workflow with `gh` CLI
+
+Install the [GitHub CLI](https://cli.github.com/) if you haven't already, then authenticate:
+
+```bash
+gh auth login
+```
+
+**Trigger a manual run:**
+
+```bash
+gh workflow run daily.yml
+```
+
+You can also pass a custom lookback period:
+
+```bash
+gh workflow run daily.yml -f days=14
+```
+
+**Check that the workflow appears and is enabled:**
+
+```bash
+gh workflow list
+```
+
+**Watch a run in real time:**
+
+```bash
+gh run watch
+```
+
+This will prompt you to select a run if multiple are in progress.
+
+**List recent runs and their status:**
+
+```bash
+gh run list --workflow=daily.yml
+```
+
+**View logs for a specific run** (useful for debugging secret/config issues):
+
+```bash
+# List runs to find the run ID
+gh run list --workflow=daily.yml
+
+# View the full log
+gh run view <run-id> --log
+```
+
+**Verify secrets are configured** (this lists secret names, not values):
+
+```bash
+gh secret list
+```
+
+You should see `SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID`, `GOOGLE_CREDENTIALS`, `GOOGLE_SHEET_ID`, and optionally `PUBMED_API_KEY`.
 
 ## How It Works
 
