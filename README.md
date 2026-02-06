@@ -33,8 +33,8 @@ Create a Google Sheet with the following columns:
 
 | pubmed_name | slack_user_id | name_variants | affiliation |
 |-------------|---------------|---------------|-------------|
-| Sarma Aartik | U01ABC123 | Sarma A, Sarma AA | UCSF |
-| Smith John | U02DEF456 | Smith J, Smith JD | Harvard |
+| Curie Marie | U01ABC123 | Curie M, Sklodowska-Curie M | University of Paris |
+| Darwin Charles | U02DEF456 | Darwin C, Darwin CR | University of Cambridge |
 
 - `pubmed_name`: Primary author name as it appears on PubMed
 - `slack_user_id`: Slack member ID (find via user profile > More > Copy member ID). Optional - if omitted, the name will be shown without a mention.
