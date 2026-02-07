@@ -13,9 +13,6 @@ on:
         default: '7'
         type: string
 
-permissions:
-  contents: write
-
 jobs:
   check-pubmed:
     runs-on: ubuntu-latest
@@ -23,6 +20,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Restore posted papers cache
+        uses: actions/cache@v4
+        with:
+          path: posted_papers.json
+          key: posted-papers-${{ github.run_id }}
+          restore-keys: |
+            posted-papers-
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -40,11 +45,3 @@ jobs:
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
           PUBMED_API_KEY: ${{ secrets.PUBMED_API_KEY }}
         run: python pubmed_bot.py --days ${{ inputs.days || '7' }}
-
-      - name: Commit updated posted_papers.json
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add posted_papers.json
-          git diff --staged --quiet || git commit -m "Update posted papers list"
-          git push
