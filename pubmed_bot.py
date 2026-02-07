@@ -122,7 +122,12 @@ def search_pubmed(
     # Build search term
     search_term = f'{author_name}[Author]'
     if affiliation:
-        search_term = f'({search_term}) AND {affiliation}[Affiliation]'
+        affiliations = [a.strip() for a in affiliation.split("|")]
+        if len(affiliations) == 1:
+            search_term = f'({search_term}) AND {affiliations[0]}[Affiliation]'
+        else:
+            affiliation_query = " OR ".join(f'{a}[Affiliation]' for a in affiliations)
+            search_term = f'({search_term}) AND ({affiliation_query})'
 
     params = {
         "db": "pubmed",
