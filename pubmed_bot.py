@@ -10,6 +10,7 @@ import argparse
 import json
 import os
 import random
+import sys
 import time
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -383,8 +384,18 @@ def main():
     print(f"Found {len(authors)} authors to track")
 
     # Load already-posted papers
+    first_run = not POSTED_PAPERS_FILE.exists()
     posted_pmids = load_posted_papers()
     print(f"Already posted {len(posted_pmids)} papers")
+
+    # On first run with default lookback, use 1 day to avoid flooding the channel
+    days = args.days
+    if first_run and days > 1 and '--days' not in sys.argv:
+        print(f"First run detected (no posted_papers.json) - using 1-day lookback instead of {days}")
+        print("Use --days N to override this behavior")
+        days = 1
+    elif first_run and days > 1:
+        print(f"First run with --days {days}: all papers found will be posted")
 
     # Search PubMed for each author
     print("\nSearching PubMed...")
@@ -401,7 +412,7 @@ def main():
         affiliation = global_affiliation or author.get("affiliation")
 
         for name in author["all_names"]:
-            pmids = search_pubmed(name, days=args.days, api_key=api_key, affiliation=affiliation)
+            pmids = search_pubmed(name, days=days, api_key=api_key, affiliation=affiliation)
             for pmid in pmids:
                 all_pmids.add(pmid)
                 if pmid not in paper_to_authors:
