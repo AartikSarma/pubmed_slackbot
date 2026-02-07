@@ -1,6 +1,6 @@
 # PubMed Slack Bot
 
-A bot that monitors PubMed daily for new publications by members of a research group and posts announcements to Slack with author tagging. It runs for free using GitHub Actions on a daily schedule—no servers required.
+A bot that monitors PubMed daily for new publications by any list of authors and posts announcements to Slack with author tagging. It runs for free using GitHub Actions on a daily schedule—no servers required. Use it to track your research group, collaborators, or any set of authors you're interested in.
 
 ## Features
 
@@ -12,7 +12,7 @@ A bot that monitors PubMed daily for new publications by members of a research g
 
 ## Create Your Own Instance
 
-Follow this guide to set up your own PubMed Slack bot for your research group. The entire process uses free tiers of GitHub Actions, Google Sheets, and the PubMed API.
+Follow this guide to set up your own PubMed Slack bot. You can track any set of authors — your research group, collaborators, or anyone whose publications you want to follow. The entire process uses free tiers of GitHub Actions, Google Sheets, and the PubMed API.
 
 ### What You'll Need
 
