@@ -200,7 +200,7 @@ You should see `SLACK_BOT_TOKEN`, `SLACK_CHANNEL_ID`, `GOOGLE_CREDENTIALS`, `GOO
 4. Filters out papers that have already been posted
 5. Fetches full paper details (title, authors, journal)
 6. Posts formatted messages to Slack with author mentions
-7. Updates `posted_papers.json` to track what's been posted
+7. Updates `posted_papers.json` to track what's been posted (persisted via GitHub Actions cache, not committed to the repo, to keep the author list private)
 
 ## Rate Limits
 

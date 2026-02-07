@@ -1,7 +1,6 @@
 # Environment
 .env
 *.json
-!posted_papers.json
 
 # Google credentials
 *credentials*.json
