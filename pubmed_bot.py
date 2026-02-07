@@ -246,16 +246,16 @@ def format_slack_message(paper: dict, group_authors: list[dict]) -> str:
     if len(paper["authors"]) > 10:
         authors_str += f", et al. ({len(paper['authors'])} authors)"
 
-    # Format CLIF authors - use @mention if valid Slack ID, otherwise just name
-    clif_authors_parts = []
+    # Format group members - use @mention if valid Slack ID, otherwise just name
+    member_parts = []
     for a in group_authors:
         slack_id = a.get("slack_user_id", "")
         # Valid Slack user IDs start with 'U' or 'W' and are alphanumeric
         if slack_id and slack_id[0] in ("U", "W") and slack_id.isalnum():
-            clif_authors_parts.append(f"<@{slack_id}>")
+            member_parts.append(f"<@{slack_id}>")
         else:
-            clif_authors_parts.append(a.get("pubmed_name", "Unknown"))
-    clif_authors_str = " ".join(clif_authors_parts)
+            member_parts.append(a.get("pubmed_name", "Unknown"))
+    members_str = " ".join(member_parts)
 
     pubmed_url = f"https://pubmed.ncbi.nlm.nih.gov/{paper['pmid']}/"
 
@@ -269,7 +269,7 @@ def format_slack_message(paper: dict, group_authors: list[dict]) -> str:
         f"{emoji} *New Publication*\n\n"
         f"*Title:* {title}\n\n"
         f"*Authors:* {authors_str}{journal_info}\n\n"
-        f"*CLIF authors:* {clif_authors_str}\n\n"
+        f"*Group members:* {members_str}\n\n"
         f"{pubmed_url}"
     )
 
