@@ -17,9 +17,28 @@ jobs:
   check-pubmed:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # GitHub disables scheduled workflows in repos with no commit activity for
+      # 60 days. Push an empty commit once the repo approaches that window so the
+      # daily schedule does not silently stop running.
+      - name: Keep scheduled workflow alive
+        if: github.event_name == 'schedule'
+        run: |
+          days_since_last_commit=$(( ( $(date +%s) - $(git log -1 --format=%ct) ) / 86400 ))
+          echo "Last commit was ${days_since_last_commit} days ago"
+          if [ "${days_since_last_commit}" -ge 45 ]; then
+            echo "Pushing an empty commit to reset the 60-day inactivity timer"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit --allow-empty -m "chore: keep scheduled workflow alive"
+            git push
+          fi
 
       - name: Restore posted papers cache
         uses: actions/cache@v4
