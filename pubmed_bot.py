@@ -441,6 +441,7 @@ def main():
     # Post to Slack
     print("\nPosting to Slack...")
     posted_count = 0
+    failed_count = 0
 
     for paper in papers:
         pmid = paper["pmid"]
@@ -462,6 +463,8 @@ def main():
             posted_pmids.add(pmid)
             posted_count += 1
             time.sleep(1)  # Respect Slack rate limits
+        else:
+            failed_count += 1
 
     # Save updated posted papers
     if not args.dry_run:
@@ -469,6 +472,12 @@ def main():
         print(f"\nSaved {len(posted_pmids)} total PMIDs to {POSTED_PAPERS_FILE}")
 
     print(f"\nDone! Posted {posted_count} new papers.")
+
+    # Exit non-zero so a broken Slack token surfaces as a failed workflow run
+    # instead of a green check with nothing posted.
+    if failed_count:
+        print(f"ERROR: {failed_count} paper(s) could not be posted to Slack.")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
